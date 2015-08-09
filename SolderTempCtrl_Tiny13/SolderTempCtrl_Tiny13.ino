@@ -1,9 +1,13 @@
 /**************************************************************
- Target MCU: ATTiny13
-  Name    : CLKinternal_NoMillis_SolderCtrl.ino --> SolderTempCtrl_Tiny13.ino
+ Target MCU: ATTiny13A
+  Name    : SolderTempCtrl_Tiny13.ino
   Author  : Insoo Kim
   Date    : March 21, 2015    
-  Desc    : Solder iron termperature control by intermittent power switching
+  Update  : Sun Aug 9, 2015
+  Desc    : 
+    1) Solder iron termperature control by intermittent power switching
+        initially gives 90 seconds of power, then on & off every 10 seconds.
+    2) Safety cut-off time is set to 20 minutes after beginning system running.
   Notes   : 
     Clock source: Internal 9.6Mhz of ATTiny13A
     
