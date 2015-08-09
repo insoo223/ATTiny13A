@@ -1,6 +1,6 @@
 /**************************************************************
   Target MCU & internal clock speed: ATtiny13 @ 9.6Mhz
-  Name    : RC315Mhz_Relay_ModularBd_Tiny13.ino
+  Name    : RC315Mhz_Relay_ModularBd_Tiny13.ino --> RC315Mhz_Relay_Tiny13.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : April 02, 2015    
 
