@@ -3,7 +3,10 @@
   Name    : CLKinternal_NoMillis_SolderCtrl.ino --> SolderTempCtrl_Tiny13.ino
   Author  : Insoo Kim
   Date    : March 21, 2015    
-  Notes   : Solder termperature control using power switching period
+  Desc    : Solder iron termperature control by intermittent power switching
+  Notes   : 
+    Clock source: Internal 9.6Mhz of ATTiny13A
+    
 ****************************************************************/
 
 //calibration value for 500ms at ATtiny13 @ 9.6Mhz mode
