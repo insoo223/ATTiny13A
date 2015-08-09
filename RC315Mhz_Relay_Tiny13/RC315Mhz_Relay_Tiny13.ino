@@ -1,11 +1,13 @@
 /**************************************************************
   Target MCU & internal clock speed: ATtiny13 @ 9.6Mhz
-  Name    : RC315Mhz_Relay_ModularBd_Tiny13.ino --> RC315Mhz_Relay_Tiny13.ino
+  Name    : RC315Mhz_Relay_Tiny13.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : April 02, 2015    
+  Update  : Sun Aug 9, 2015
+  Desc    : Turn on/off relay via RF remote control keys
+  Notes   : 
+    Clock source: Internal 9.6Mhz of ATTiny13A
 
-  Description: Turn on/off LEDs responding RF remote control keys
-  
   Ref:
   ** RC315Mhz_Decode.ino
   ** Test of RF decoder using SC2272-M4 chip
