@@ -1,6 +1,6 @@
 /**************************************************************
   Target MCU & internal clock speed: ATtiny13 @ 9.6Mhz
-  Name    : TempYut_LM35_74HC595_ATtiny13.ino
+  Name    : TempYut_LM35_74HC595_ATtiny13.ino --> TempYut_LM35_74HC595_Tiny13.ino
   Author  : Insoo Kim
   Date    : March 26, 2015    
 
