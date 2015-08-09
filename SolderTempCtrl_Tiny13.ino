@@ -1,6 +1,6 @@
 /**************************************************************
  Target MCU: ATTiny13
-  Name    : CLKinternal_NoMillis_SolderCtrl.ino
+  Name    : CLKinternal_NoMillis_SolderCtrl.ino --> SolderTempCtrl_Tiny13.ino
   Author  : Insoo Kim
   Date    : March 21, 2015    
   Notes   : Solder termperature control using power switching period
