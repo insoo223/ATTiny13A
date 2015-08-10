@@ -1,20 +1,22 @@
 /**************************************************************
   Target MCU & internal clock speed: ATtiny13 @ 9.6Mhz
-  Name    : RC315Mhz_Relay_Tiny13.ino
+  Name    : RC315Mhz_SolderCtrl_CD4021_Tiny13.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : April 02, 2015    
-  Update  : Sun Aug 9, 2015
+  Update  : Mon Aug 10, 2015
   Desc    : 
-    1) Using CD4021BE input expansion IC, 
-       control relay via 315Mhz RF remote control keys. 
+    1) When system is on, the 1st power cycle engaged to relayPin for 90 sec,
+        then the relayPin will on and off by user selectable on-going interval
+        via RF remote control keys. 
+       Default on-going interval is 10 sec.
        
-    2) Set the relayPin on/off via RF remote control keys. 
-       A button: relay On
-       B button: relay Off
-
-    3) As of Aug 9, 2015, no function is assinged to the other keys.
-       C button: NA
-       D button: NA
+    2) Set the on-going interval of relayPin on/off via RF remote control keys. 
+       A button: 20 sec
+       B button: 10 sec 
+    3) Turn on or off the system by resetting or overflowing the safety counter.
+       C button: system on again by clearing the safety counter
+       D button: system off by overflowing the safety counter
+    
   Notes   : 
     Clock source: Internal 9.6Mhz of ATTiny13A
 
@@ -27,12 +29,31 @@
   ** https://dzrmo.wordpress.com/2012/07/08/remote-control-pt2272-for-android/
   ** LICENSE: GNU General Public License, version 3 (GPL-3.0)
 *****************************************************************/  
-//PB# of ATtiny13
+//calibration value for 500ms at ATtiny13A @ 9.6Mhz mode
+#define DURATION 370 
+// power off minutes for safety
+#define safetyPwrOff 20
+
+// 90 seconds for init heat. SHOULD put double of your wished-number
+#define initHeatingINTERVAL (90*2)
+
+byte intvalSec = 10;
+// 10 seconds for on-going heat
+byte onGoingHeatingINTERVAL;
+
+//PB# of ATtiny13A
 byte dataPin = 2; //Q8 of CD4021
 byte clockPin = 1; // Clock of CD4021
 byte latchPin = 0; //P/S ctrl of CD4021
 
-byte relay = 3;
+byte relayPin = 3;
+
+//for solder iron temperature control
+byte prevLoop=0, curLoop=0, lapse=0;
+byte loopCnt=0;
+byte minCnt=0, onGoingCnt=0;
+
+boolean DONE_initHeat = false;
 
 //Pi(Parallel input)# of CD4021 
 // RF receiver module(“XY-DJM-5V”) pin defines - wired to Arduino Digital pins
@@ -84,13 +105,16 @@ void setup()
   pinMode(clockPin, OUTPUT); 
   pinMode(dataPin, INPUT);
 
-  pinMode(relay, OUTPUT);
+  pinMode(relayPin, OUTPUT);
 } // setup
      
 //------------------------------------------------
 void loop()
 {
   byte FourBits=0;
+  
+  onGoingHeatingINTERVAL = intvalSec*2;  
+  solderCtrl();
   
   readRFdata();
 
@@ -102,20 +126,40 @@ void loop()
     {
       case 2: // Button A: 0 0 1 0
       {
-        digitalWrite(relay, HIGH);
+        //20 sec on-going interval
+        digitalWrite(relayPin, HIGH);
+        intvalSec = 20;
+        delay(200);
+        digitalWrite(relayPin, LOW);
         break;
       }
       case 8: // Button B: 1 0 0 0
       {
-        digitalWrite(relay, LOW);
+        //10 sec on-going interval
+        digitalWrite(relayPin, HIGH);
+        intvalSec = 10;
+        delay(200);
+        digitalWrite(relayPin, LOW);
         break;
       }
       case 1: // Button C: 0 0 0 1
       {
+        //Turn on the system by resetting the minCnt
+        //digitalWrite(relayPin, HIGH);
+        DONE_initHeat = false;
+        minCnt = 0;
+        loopCnt = 0;
+        //delay(200);
+        //digitalWrite(relayPin, LOW);
         break;
       }
       case 4: // Button D: 0 1 0 0
       {
+        //Turn off the system by overflowing the minCnt
+        //digitalWrite(relayPin, HIGH);
+        minCnt = safetyPwrOff+1;
+        //delay(200);
+        //digitalWrite(relayPin, LOW);
         break;
       }
     } // switch (FourBits)
@@ -123,6 +167,65 @@ void loop()
 
   delay(50);
 } // loop
+
+//------------------------------------------------
+void solderCtrl() 
+{
+  if (minCnt < safetyPwrOff)
+  {
+    loopCnt++;  
+  
+    curLoop = loopCnt;
+    lapse = curLoop - prevLoop;
+  
+    if (!DONE_initHeat)  
+      //initial heating
+      if (lapse < initHeatingINTERVAL)
+      {
+        digitalWrite(relayPin, HIGH);
+        //digitalWrite(LEDpin, HIGH);
+      }
+      else
+      {
+        digitalWrite(relayPin, LOW);
+        //digitalWrite(LEDpin, LOW);
+        DONE_initHeat = true;
+        loopCnt = 0;
+        curLoop = 0;
+        prevLoop = 0;
+        minCnt = 2; // round of 1.5 min
+        delay(onGoingHeatingINTERVAL*DURATION);
+      }
+    else
+      //On-going heating
+      if (lapse < onGoingHeatingINTERVAL)
+      {
+        digitalWrite(relayPin, HIGH);
+        //digitalWrite(LEDpin, HIGH);
+      }
+      else
+      {
+        digitalWrite(relayPin, LOW);
+        //digitalWrite(LEDpin, LOW);
+        delay(onGoingHeatingINTERVAL*DURATION);
+        loopCnt = 0;
+        curLoop = 0;
+        prevLoop = 0;
+        onGoingCnt++;
+        if (onGoingCnt == 3)
+        {
+          minCnt ++;
+          onGoingCnt = 0;
+        }
+      }
+      delay(DURATION);
+  }// if (minCnt < safetyPwrOff)
+  else
+  {
+    digitalWrite(relayPin, LOW);
+    //digitalWrite(LEDpin, LOW);
+  }
+}//solderCtrl
 
 //------------------------------------------------
 ////// -----shiftIn function
