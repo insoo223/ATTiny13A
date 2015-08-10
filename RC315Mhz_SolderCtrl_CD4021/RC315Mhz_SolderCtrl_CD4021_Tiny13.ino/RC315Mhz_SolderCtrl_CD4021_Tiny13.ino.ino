@@ -75,29 +75,6 @@ byte dirty = 0;
 byte switchVar1 = 0x48;  //01001000
 
 //------------------------------------------------
-void readRFdata()
-{
-  byte triggered=0;
-  
-  //Pulse the latch pin:
-  //set it to 1 to collect parallel data
-  digitalWrite(latchPin,1);
-  //set it to 1 to collect parallel data, wait
-  delayMicroseconds(20);
-  //set it to 0 to transmit data serially  
-  digitalWrite(latchPin,0);
-
-  //while the shift register is in serial mode
-  //collect each shift register into a byte
-  //the register attached to the chip comes in first 
-  switchVar1 = shiftIn(dataPin, clockPin);
-
-  triggered = switchVar1 & 0x80;
-  if(triggered)
-    dirty = 1;                          // flag interrupt occurance
-} //readRFdata
-     
-//------------------------------------------------
 void setup()
 {
   //define CD4021 pin modes
@@ -179,12 +156,14 @@ void solderCtrl()
     lapse = curLoop - prevLoop;
   
     if (!DONE_initHeat)  
+    {
       //initial heating
       if (lapse < initHeatingINTERVAL)
       {
         digitalWrite(relayPin, HIGH);
+        readRFdata();
         //digitalWrite(LEDpin, HIGH);
-      }
+      }//if (lapse < initHeatingINTERVAL)
       else
       {
         digitalWrite(relayPin, LOW);
@@ -195,12 +174,15 @@ void solderCtrl()
         prevLoop = 0;
         minCnt = 2; // round of 1.5 min
         delay(onGoingHeatingINTERVAL*DURATION);
-      }
+      }//else , that is (lapse >= initHeatingINTERVAL)
+    }//if (!DONE_initHeat)  
     else
+    {
       //On-going heating
       if (lapse < onGoingHeatingINTERVAL)
       {
         digitalWrite(relayPin, HIGH);
+        readRFdata();
         //digitalWrite(LEDpin, HIGH);
       }
       else
@@ -219,14 +201,39 @@ void solderCtrl()
         }
       }
       delay(DURATION);
+    }//else, that is (DONE_initHeat == true)  
   }// if (minCnt < safetyPwrOff)
   else
   {
+    //system off
     digitalWrite(relayPin, LOW);
     //digitalWrite(LEDpin, LOW);
-  }
+  }//else, that is (minCnt >= safetyPwrOff)
 }//solderCtrl
 
+//------------------------------------------------
+void readRFdata()
+{
+  byte triggered=0;
+  
+  //Pulse the latch pin:
+  //set it to 1 to collect parallel data
+  digitalWrite(latchPin,1);
+  //set it to 1 to collect parallel data, wait
+  delayMicroseconds(20);
+  //set it to 0 to transmit data serially  
+  digitalWrite(latchPin,0);
+
+  //while the shift register is in serial mode
+  //collect each shift register into a byte
+  //the register attached to the chip comes in first 
+  switchVar1 = shiftIn(dataPin, clockPin);
+
+  triggered = switchVar1 & 0x80;
+  if(triggered)
+    dirty = 1;                          // flag interrupt occurance
+} //readRFdata
+     
 //------------------------------------------------
 ////// -----shiftIn function
 ///// just needs the location of the data pin and the clock pin
