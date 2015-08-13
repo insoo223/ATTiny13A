@@ -204,7 +204,7 @@ void timedPowerCtrl()
     else
     {
       digitalWrite(relayPin, LOW);
-      if ( minCnt > (ONintervalMin + OFFintervalMin) )
+      if ( minCnt >= (ONintervalMin + OFFintervalMin) )
       {
         //minCnt is reset every twice ONintervalMin
         minCnt = 0;
