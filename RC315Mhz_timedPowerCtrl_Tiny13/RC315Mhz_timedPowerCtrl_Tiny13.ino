@@ -8,7 +8,8 @@
   Desc    : There are two mode of operation: 
       modeOP 1 for Fan, modeOP 2 for mosquito repellent vaporizer
       
-    1) When system is on, the default modeOP is 1, that is for control electric fan. 
+    1) When system is on, the default modeOP is 1 or 2, 
+        that is for control electric fan or mosquitor repellent vaporizer. 
        
     2) Set the modeOP  via RF remote control keys. 
        A button: 1 for Fan
@@ -42,7 +43,7 @@
 #define safetyPwrOff 8 //after 8 hrs of run-time, the system will be off.
 
 //mode of operation: 1 - Fan, 2 - mosquito repellent vaporizer
-byte modeOP = 1;
+byte modeOP = 2;
 
 byte ONintervalMin;
 byte OFFintervalMin;

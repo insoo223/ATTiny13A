@@ -1,9 +1,9 @@
 /**************************************************************
  Target MCU: ATTiny13A
-  Name    : SolderTempCtrl_Tiny13.ino
+  Name    : Solder60wTempCtrl_Tiny13.ino
   Author  : Insoo Kim
   Date    : March 21, 2015    
-  Update  : Fri Aug 14, 2015
+  Update  : Tue Aug 25, 2015
   Desc    : 
     1) Solder iron termperature control by intermittent power switching
         initially gives 90 seconds of power, then on & off every 10 seconds.
@@ -21,14 +21,14 @@
 
 // 90 seconds for init heat. Muliply by 2 for it loops every half a second.
 //#define initHeatingMin (90*2) //for an iron of 60W
-byte initHeatingMin=3; //3min
+byte initHeatingMin=1; //1min
 
 //#define initHeatingMin 3 //for an iron of 30W//
 // 10 seconds for on-going heat
 //#define ongoingONsec (10*2) //for an iron of 60W
 //Muliply by 2 for it loops every half a second.
-byte ongoingONsec=(30*2); //30sec
-byte ongoingOFFsec=(10*2); //10sec
+byte ongoingONsec=(20*2); //10sec
+byte ongoingOFFsec=(40*2); //30sec
 
 #define relaySWpin 0
 #define LEDpin 1
