@@ -3,7 +3,7 @@
   Name    : RC315Mhz_timedPowerCtrl_Tiny13.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : Thu Aug 13, 2015    
-  Update  : 
+  Update  : Mon Aug 31, 2015    
   Objective: Control electric power cycle
   Desc    : There are two mode of operation: 
       modeOP 1 for Fan, modeOP 2 for mosquito repellent vaporizer
