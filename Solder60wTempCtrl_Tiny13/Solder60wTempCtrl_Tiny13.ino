@@ -3,7 +3,7 @@
   Name    : Solder60wTempCtrl_Tiny13.ino
   Author  : Insoo Kim
   Date    : March 21, 2015    
-  Update  : Tue Aug 25, 2015
+  Update  : Mon Oct 19, 2015
   Desc    : 
     1) Solder iron termperature control by intermittent power switching
         initially gives 90 seconds of power, then on & off every 10 seconds.
@@ -27,11 +27,11 @@ byte initHeatingMin=1; //1min
 // 10 seconds for on-going heat
 //#define ongoingONsec (10*2) //for an iron of 60W
 //Muliply by 2 for it loops every half a second.
-byte ongoingONsec=(20*2); //10sec
-byte ongoingOFFsec=(40*2); //30sec
+byte ongoingONsec=(5*2); //5sec
+byte ongoingOFFsec=(10*2); //10sec
 
 #define relaySWpin 0
-#define LEDpin 1
+//#define LEDpin 1
 
 byte prevLoop=0, curLoop=0, lapse=0;
 byte loopCnt=0;
@@ -42,7 +42,7 @@ boolean DONE_initHeat = false;
 //-------- SETUP
 void setup() {
   pinMode(relaySWpin, OUTPUT);
-  pinMode(LEDpin, OUTPUT);
+  //pinMode(LEDpin, OUTPUT);
 }//setup
 
 //-------- LOOP
@@ -67,12 +67,12 @@ void loop()
       if (minCnt < initHeatingMin)
       {
         digitalWrite(relaySWpin, HIGH);
-        digitalWrite(LEDpin, HIGH);
+        //digitalWrite(LEDpin, HIGH);
       }
       else
       {
         digitalWrite(relaySWpin, LOW);
-        digitalWrite(LEDpin, LOW);
+        //digitalWrite(LEDpin, LOW);
         DONE_initHeat = true;
         loopCnt = 0;
         minCnt = 0;
@@ -83,12 +83,12 @@ void loop()
       if (loopCnt < ongoingONsec)
       {
         digitalWrite(relaySWpin, HIGH);
-        digitalWrite(LEDpin, HIGH);
+        //digitalWrite(LEDpin, HIGH);
       }
       else
       {
         digitalWrite(relaySWpin, LOW);
-        digitalWrite(LEDpin, LOW);
+        //digitalWrite(LEDpin, LOW);
         if ( loopCnt >= (ongoingONsec + ongoingOFFsec) )
         {
           loopCnt = 0;
@@ -99,7 +99,7 @@ void loop()
   else
   {
     digitalWrite(relaySWpin, LOW);
-    digitalWrite(LEDpin, LOW);
+    //digitalWrite(LEDpin, LOW);
   }
 }//loop
 
